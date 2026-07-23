@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Author List</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1>Library Management System</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="books.html">Books</a>
+    <a href="authors.html">Authors</a>
+    <a href="genres.html">Genres</a>
+  </nav>
+
+  <main>
+    <div class="page-heading">
+      <h2>Author List</h2>
+      <a href="author-form.html" class="button">Add Author</a>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Author Name</th>
+          <th>Biography</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody id="authorTableBody"></tbody>
+    </table>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    displayAuthors();
+  </script>
+
+</body>
+
+</html>

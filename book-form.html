@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add or Edit Book</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1>Library Management System</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="books.html">Books</a>
+    <a href="authors.html">Authors</a>
+    <a href="genres.html">Genres</a>
+  </nav>
+
+  <main>
+    <h2 id="bookFormTitle">Add Book</h2>
+
+    <form id="bookForm">
+      <label for="bookTitle">Title</label>
+      <input type="text" id="bookTitle" required>
+
+      <label for="bookAuthor">Author</label>
+      <select id="bookAuthor" required></select>
+
+      <label for="bookGenre">Genre</label>
+      <select id="bookGenre" required></select>
+
+      <label for="bookStock">Stock Quantity</label>
+      <input type="number" id="bookStock" min="0" required>
+
+      <label for="bookCover">Cover Image</label>
+      <input type="file" id="bookCover" accept="image/*">
+
+      <img id="coverPreview" class="cover-preview" alt="Book cover preview">
+
+      <button type="submit">Save Book</button>
+    </form>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    loadBookForm();
+  </script>
+
+</body>
+
+</html>
