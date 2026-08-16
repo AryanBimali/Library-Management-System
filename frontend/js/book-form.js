@@ -1,6 +1,10 @@
 let authors = [];
 let genres = [];
 
+// =====================================================
+// LOAD AUTHORS
+// =====================================================
+
 async function loadAuthors() {
   const response = await fetch("/api/authors");
 
@@ -12,6 +16,10 @@ async function loadAuthors() {
 
   authors = data;
 }
+
+// =====================================================
+// LOAD GENRES
+// =====================================================
 
 async function loadGenres() {
   const response = await fetch("/api/genres");
@@ -25,6 +33,10 @@ async function loadGenres() {
   genres = data;
 }
 
+// =====================================================
+// FILL AUTHOR DROPDOWN
+// =====================================================
+
 function fillAuthorSelect() {
   const authorSelect = document.getElementById("bookAuthor");
 
@@ -33,13 +45,20 @@ function fillAuthorSelect() {
   for (let i = 0; i < authors.length; i++) {
     const option = document.createElement("option");
 
-    option.value = authors[i].name;
+    // IMPORTANT:
+    // Use author ID as the value
+    option.value = authors[i].id;
 
+    // Display author name
     option.textContent = authors[i].name;
 
     authorSelect.appendChild(option);
   }
 }
+
+// =====================================================
+// FILL GENRE DROPDOWN
+// =====================================================
 
 function fillGenreSelect() {
   const genreSelect = document.getElementById("bookGenre");
@@ -49,13 +68,20 @@ function fillGenreSelect() {
   for (let i = 0; i < genres.length; i++) {
     const option = document.createElement("option");
 
-    option.value = genres[i].name;
+    // IMPORTANT:
+    // Use genre ID as the value
+    option.value = genres[i].id;
 
+    // Display genre name
     option.textContent = genres[i].name;
 
     genreSelect.appendChild(option);
   }
 }
+
+// =====================================================
+// LOAD BOOK FORM
+// =====================================================
 
 async function loadBookForm() {
   const form = document.getElementById("bookForm");
@@ -65,17 +91,24 @@ async function loadBookForm() {
   }
 
   try {
+    // Load authors and genres
     await loadAuthors();
     await loadGenres();
 
+    // Fill dropdowns
     fillAuthorSelect();
     fillGenreSelect();
 
+    // Check if this is edit mode
     const parameters = new URLSearchParams(window.location.search);
 
     const id = parameters.get("id");
 
     let editingBook = null;
+
+    // =================================================
+    // EDIT BOOK
+    // =================================================
 
     if (id) {
       const response = await fetch("/api/books/" + id);
@@ -92,12 +125,17 @@ async function loadBookForm() {
 
       document.getElementById("bookTitle").value = book.title;
 
-      document.getElementById("bookAuthor").value = book.author;
+      // IMPORTANT:
+      // Select the author using author_id
+      document.getElementById("bookAuthor").value = book.author_id;
 
-      document.getElementById("bookGenre").value = book.genre;
+      // IMPORTANT:
+      // Select the genre using genre_id
+      document.getElementById("bookGenre").value = book.genre_id;
 
       document.getElementById("bookStock").value = book.stock;
 
+      // Display existing cover
       if (book.cover) {
         const preview = document.getElementById("coverPreview");
 
@@ -106,6 +144,10 @@ async function loadBookForm() {
         preview.style.display = "block";
       }
     }
+
+    // =================================================
+    // COVER IMAGE PREVIEW
+    // =================================================
 
     const imageInput = document.getElementById("bookCover");
 
@@ -139,23 +181,30 @@ async function loadBookForm() {
       reader.readAsDataURL(imageFile);
     });
 
+    // =================================================
+    // FORM SUBMISSION
+    // =================================================
+
     form.addEventListener("submit", async function (event) {
       event.preventDefault();
 
       const title = document.getElementById("bookTitle").value.trim();
 
-      const author = document.getElementById("bookAuthor").value;
+      // These are now IDs
+      const author_id = document.getElementById("bookAuthor").value;
 
-      const genre = document.getElementById("bookGenre").value;
+      const genre_id = document.getElementById("bookGenre").value;
 
       const stock = document.getElementById("bookStock").value;
 
-      if (!title || !author || !genre || stock === "") {
+      // Validate fields
+      if (!title || !author_id || !genre_id || stock === "") {
         alert("Please fill in all required fields.");
 
         return;
       }
 
+      // Validate stock
       if (Number(stock) < 0) {
         alert("Stock quantity cannot be negative.");
 
@@ -164,14 +213,18 @@ async function loadBookForm() {
 
       const imageFile = imageInput.files[0];
 
+      // =================================================
+      // NEW COVER IMAGE
+      // =================================================
+
       if (imageFile) {
         const reader = new FileReader();
 
         reader.onload = async function () {
           await saveBook(
             title,
-            author,
-            genre,
+            author_id,
+            genre_id,
             stock,
             reader.result,
             editingBook,
@@ -179,28 +232,54 @@ async function loadBookForm() {
         };
 
         reader.readAsDataURL(imageFile);
-      } else {
+      }
+
+      // =================================================
+      // NO NEW COVER IMAGE
+      // =================================================
+      else {
         const oldCover = editingBook ? editingBook.cover : "";
 
-        await saveBook(title, author, genre, stock, oldCover, editingBook);
+        await saveBook(
+          title,
+          author_id,
+          genre_id,
+          stock,
+          oldCover,
+          editingBook,
+        );
       }
     });
   } catch (error) {
+    console.error(error);
+
     alert(error.message);
   }
 }
 
-async function saveBook(title, author, genre, stock, cover, editingBook) {
+// =====================================================
+// SAVE BOOK
+// =====================================================
+
+async function saveBook(title, author_id, genre_id, stock, cover, editingBook) {
   try {
     let response;
 
+    // IMPORTANT:
+    // These names MUST match the database/backend
     const bookData = {
       title: title,
-      author: author,
-      genre: genre,
+      author_id: Number(author_id),
+      genre_id: Number(genre_id),
       stock: Number(stock),
       cover: cover || "",
     };
+
+    console.log("Sending book data:", bookData);
+
+    // =================================================
+    // UPDATE EXISTING BOOK
+    // =================================================
 
     if (editingBook) {
       response = await fetch("/api/books/" + editingBook.id, {
@@ -212,7 +291,12 @@ async function saveBook(title, author, genre, stock, cover, editingBook) {
 
         body: JSON.stringify(bookData),
       });
-    } else {
+    }
+
+    // =================================================
+    // CREATE NEW BOOK
+    // =================================================
+    else {
       response = await fetch("/api/books", {
         method: "POST",
 
@@ -226,6 +310,8 @@ async function saveBook(title, author, genre, stock, cover, editingBook) {
 
     const result = await response.json();
 
+    console.log("Server response:", result);
+
     if (!response.ok) {
       throw new Error(result.error || "Failed to save book.");
     }
@@ -234,8 +320,14 @@ async function saveBook(title, author, genre, stock, cover, editingBook) {
 
     window.location.href = "books.html";
   } catch (error) {
+    console.error("Save book error:", error);
+
     alert(error.message);
   }
 }
+
+// =====================================================
+// START
+// =====================================================
 
 loadBookForm();
