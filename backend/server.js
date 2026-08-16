@@ -34,13 +34,13 @@ app.get("/api", async (req, res) => {
 
     res.json({
       message: "Library Management System API is running.",
-      database: "connected"
+      database: "connected",
     });
   } catch (error) {
-    console.error(error);
+    console.error("Database error:", error);
 
     res.status(500).json({
-      message: "Database connection failed."
+      message: "Database connection failed.",
     });
   }
 });
@@ -51,11 +51,33 @@ app.get("/api", async (req, res) => {
 
 const frontendPath = path.join(__dirname, "../frontend");
 
-app.use(express.static(frontendPath));
+// =====================================================
+// DEFAULT PAGE - LOGIN
+// =====================================================
 
-// Login page
+// When user visits:
+// https://your-project.vercel.app/
+//
+// show login.html first.
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(frontendPath, "login.html"));
+});
+
+// =====================================================
+// STATIC FRONTEND FILES
+// =====================================================
+
+app.use(express.static(frontendPath));
+
+// =====================================================
+// 404 API HANDLER
+// =====================================================
+
+app.use("/api", (req, res) => {
+  res.status(404).json({
+    error: "API route not found.",
+  });
 });
 
 // =====================================================
