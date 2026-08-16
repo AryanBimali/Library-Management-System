@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Library Management System - Members</title>
+
+    <link
+        rel="stylesheet"
+        href="css/members.css"
+    >
+
+</head>
+
+
+<body>
+
+    <header>
+
+        <h1>
+            Library Management System
+        </h1>
+
+    </header>
+
+
+    <nav>
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="books.html">
+            Books
+        </a>
+
+        <a href="authors.html">
+            Authors
+        </a>
+
+        <a href="genres.html">
+            Genres
+        </a>
+
+        <a href="members.html">
+            Members
+        </a>
+
+    </nav>
+
+
+    <main>
+
+        <div class="page-heading">
+
+            <div>
+
+                <h2>
+                    Library Members
+                </h2>
+
+                <p>
+                    Manage registered library members.
+                </p>
+
+            </div>
+
+
+            <button
+                id="addMemberButton"
+                class="button"
+            >
+                Add Member
+            </button>
+
+        </div>
+
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="memberSearch"
+                placeholder="Search members..."
+            >
+
+        </div>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Member ID
+                    </th>
+
+                    <th>
+                        Name
+                    </th>
+
+                    <th>
+                        Email
+                    </th>
+
+                    <th>
+                        Phone
+                    </th>
+
+                    <th>
+                        Membership Date
+                    </th>
+
+                    <th>
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="memberTableBody">
+            </tbody>
+
+        </table>
+
+    </main>
+
+
+    <script src="js/members.js"></script>
+
+</body>
+
+</html>
